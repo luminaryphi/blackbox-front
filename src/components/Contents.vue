@@ -2,7 +2,7 @@
     <body>
         
         <div class="panel">
-            <component :is="PanelType" v-on:UseCloak="SetCloak" v-on:ReturnHome="SetHome"></component>
+            <component :is="PanelType" v-on:UseCloak="SetCloak" v-on:UseDeaddrop="SetDeaddrop" v-on:ReturnHome="SetHome" v-on:ToReceive="SetReceive"></component>
         </div>
 
         <div class="info">
@@ -16,6 +16,8 @@
 
 <script>
 import CloakPanel from './CloakPanel.vue'
+import DeaddropSendPanel from './DeaddropSendPanel.vue'
+import DeaddropReceivePanel from './DeaddropReceivePanel.vue'
 import ButtonPanel from './ButtonPanel.vue'
 
 
@@ -25,6 +27,8 @@ export default {
     components: {
         CloakPanel,
         ButtonPanel,
+        DeaddropSendPanel,
+        DeaddropReceivePanel
     
     },
     data() {
@@ -39,6 +43,16 @@ export default {
             this.PanelType = CloakPanel
             this.subtitle = "/Cloak"
             this.description = "Seed another wallet with SCRT gas without a trace. Escape doxing with no link to your old address."
+        },
+        SetDeaddrop: function(){
+            this.PanelType = DeaddropSendPanel
+            this.subtitle = "/DeadDrop"
+            this.description = "Use an alias to receive tokens without having to reveal your address. Generate one randomly or customize your own."
+        },
+        SetReceive: function(){
+            this.PanelType = DeaddropReceivePanel
+            this.subtitle = "/DeadDrop"
+            this.description = "Use an alias to receive tokens without having to reveal your address. Generate one randomly or customize your own."
         },
         SetHome: function(){
             this.PanelType = ButtonPanel
