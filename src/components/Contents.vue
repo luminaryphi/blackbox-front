@@ -8,7 +8,8 @@
         <div class="info">
             <img src="@/assets/BlackBoxTitle.svg" alt="BlackBox" class="logo">
             <div class="sub-title">{{ subtitle }}</div>
-            <div class="description">{{ description }}</div>
+            <!---<div class="description">{{ description }}</div>--->
+            <div class="description"><glitched-writer :text="description" /></div>
 
         </div>
     </body>
@@ -20,7 +21,7 @@ import CloakPanel from './CloakPanel.vue'
 import DeaddropSendPanel from './DeaddropSendPanel.vue'
 import DeaddropReceivePanel from './DeaddropReceivePanel.vue'
 import ButtonPanel from './ButtonPanel.vue'
-
+import GlitchedWriter from 'vue-glitched-writer'
 
 
 
@@ -32,7 +33,7 @@ export default {
         ButtonPanel,
         DeaddropSendPanel,
         DeaddropReceivePanel,
- 
+        GlitchedWriter
     
     },
     data() {
