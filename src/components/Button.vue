@@ -15,6 +15,7 @@ export default {
 
 <style scoped>
     button {
+        font-family: 'Inter', sans-serif;
         border: none;
         font-style: normal;
         font-weight: normal;

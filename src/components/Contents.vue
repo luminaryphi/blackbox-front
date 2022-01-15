@@ -9,6 +9,7 @@
             <img src="@/assets/BlackBoxTitle.svg" alt="BlackBox" class="logo">
             <div class="sub-title">{{ subtitle }}</div>
             <div class="description">{{ description }}</div>
+
         </div>
     </body>
 </template>
@@ -22,13 +23,16 @@ import ButtonPanel from './ButtonPanel.vue'
 
 
 
+
+
 export default {
     name: 'Contents',
     components: {
         CloakPanel,
         ButtonPanel,
         DeaddropSendPanel,
-        DeaddropReceivePanel
+        DeaddropReceivePanel,
+ 
     
     },
     data() {

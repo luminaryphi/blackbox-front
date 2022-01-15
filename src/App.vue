@@ -24,8 +24,15 @@ export default {
 </script>
 
 <style>
+
+@import url('https://rsms.me/inter/inter.css');
+#app { font-family: 'Inter', sans-serif; }
+
+
+
+
 #app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
+  font-family: 'Inter', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
