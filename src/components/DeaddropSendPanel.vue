@@ -17,7 +17,7 @@
         </div>
         <div class="fee">Fee: 0.04%</div>
         <img class="return" src="@/assets/BackArrow.svg" alt="Back" v-on:click="ReturnHome">
-        <TokenPanel v-if="TokenSelect" v-on:ConfirmToken="UseToken"></TokenPanel>
+        <TokenPanel v-if="TokenSelect" v-on:ConfirmToken="UseToken" v-on:ReturnHome="CancelSelectToken"></TokenPanel>
     </form>
 </template>
 
@@ -51,6 +51,9 @@ export default {
         },
         SelectToken: function() {
             this.TokenSelect = true
+        },
+        CancelSelectToken: function() {
+            this.TokenSelect = false
         },
         UseToken: function(newDenom, newImg, newAddress) {
             this.TokenSelect = false
