@@ -42,6 +42,11 @@ export default {
 
 }
 
+a {
+  text-decoration: none;
+  color: whitesmoke;
+}
+
 body {
   background-color: black;
   background-image: linear-gradient(180deg, #C4C4C4 0%, rgba(196, 196, 196, 0) 43%);

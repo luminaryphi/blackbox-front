@@ -2,7 +2,8 @@
   <footer>
     <!-- Copyright -->
     <div>
-      © 2022 Copyright:
+      © 2022 
+      <span><img class="triv-logo" src="@/assets/Trivium_white.svg" alt=""></span>
       <a class="text-dark" href="https://triviumnode.com/">Trivium</a>
     </div>
     <!-- Copyright -->
@@ -30,5 +31,12 @@ export default {
         left: 0px;
         bottom: 0px;
 
+    }
+
+    .triv-logo {
+        height: 14px;
+        width: auto;
+        margin-left: auto;
+        margin-right: 0.25rem;
     }
 </style>
