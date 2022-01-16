@@ -9,13 +9,15 @@
             <h1>Alias</h1>
             <input type="text" placeholder="..." required>
             <h1>Amount</h1>
-            <input type="text" required>
+            <img class="token" v-on:click="SelectToken" :src="TokenImage" alt="">
+            <input type="text" :placeholder="TokenDenom" required>
         </div>
         <div class="txbutton">
             <TxSubmit text="Send" />
         </div>
         <div class="fee">Fee: 0.04%</div>
         <img class="return" src="@/assets/BackArrow.svg" alt="Back" v-on:click="ReturnHome">
+        <TokenPanel v-if="TokenSelect" v-on:ConfirmToken="UseToken"></TokenPanel>
     </form>
 </template>
 
@@ -23,12 +25,22 @@
 
 <script>
 import TxSubmit from './TxSubmit.vue'
+import TokenPanel from './TokenPanel.vue'
 
 
 export default {
     name: 'DeaddropSendPanel',
     components: {
-        TxSubmit
+        TxSubmit,
+        TokenPanel
+    },
+    data() {
+        return {
+            TokenSelect: false,
+            TokenDenom: "sSCRT",
+            TokenAddress: "secret1k0jntykt7e4g3y88ltc60czgjuqdy4c9e8fzek",
+            TokenImage: "/tokenIcons/scrt.svg"
+        }
     },
     methods: {
         ReturnHome: function() {
@@ -36,6 +48,15 @@ export default {
         },
         ToReceive: function() {
             this.$emit('ToReceive')
+        },
+        SelectToken: function() {
+            this.TokenSelect = true
+        },
+        UseToken: function(newDenom, newImg, newAddress) {
+            this.TokenSelect = false
+            this.TokenDenom = newDenom
+            this.TokenImage = "/tokenIcons/" + newImg
+            this.TokenAddress = newAddress
         }
     }
     
@@ -58,6 +79,17 @@ export default {
     position: fixed;
     transform: translate(190%, -400%);
 
+}
+
+.token {
+    width: 50px;  
+    height: auto;  
+    position: fixed;
+    transform: translate(-125%, -20%);
+}
+
+.token:hover {
+    filter: brightness(25%);
 }
 
 

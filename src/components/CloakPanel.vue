@@ -4,6 +4,7 @@
             <h1>Address</h1>
             <input type="text" placeholder="secret..." required>
             <h1>Amount</h1>
+            <img class="token" src="/tokenIcons/scrt.svg" alt="">
             <input type="text" placeholder="SSCRT" required>
         </div>
         <div class="txbutton">
@@ -56,6 +57,14 @@ input {
     padding: 5px 15px 7px;
     font-size: 14px;
     text-align: center;
+}
+
+
+.token {
+    width: 50px;  
+    height: auto;  
+    position: fixed;
+    transform: translate(-125%, -20%);
 }
 
 

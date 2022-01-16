@@ -9,7 +9,7 @@
             <img src="@/assets/BlackBoxTitle.svg" alt="BlackBox" class="logo">
             <div class="sub-title">{{ subtitle }}</div>
             <!---<div class="description">{{ description }}</div>--->
-            <div class="description"><glitched-writer :text="description" /></div>
+            <div class="description"><glitched-writer :text="description" preset="encrypted"/></div>
 
         </div>
     </body>
