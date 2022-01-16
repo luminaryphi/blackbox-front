@@ -7,7 +7,7 @@
 
         <div class="info">
             <img src="@/assets/BlackBoxTitle.svg" alt="BlackBox" class="logo">
-            <div class="sub-title">{{ subtitle }}</div>
+            <div class="sub-title"><glitched-writer :text="subtitle" preset="encrypted"/></div>
             <!---<div class="description">{{ description }}</div>--->
             <div class="description"><glitched-writer :text="description" preset="encrypted"/></div>
 
