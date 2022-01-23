@@ -2,13 +2,13 @@
     <form class="action-box controls">
         <div class="input-section">
             <h1>Address</h1>
-            <input type="text" placeholder="secret..." required>
+            <input type="text" v-model="destination" placeholder="secret..." required>
             <h1>Amount</h1>
             <img class="token" src="/tokenIcons/scrt.svg" alt="">
-            <input type="text" placeholder="sSCRT" required>
+            <input type="text" v-model="amount" placeholder="sSCRT" required>
         </div>
         <div class="txbutton">
-            <TxSubmit text="Send" />
+            <a @click=ExecuteCloak><TxSubmit text="Send" /></a>
         </div>
         <div class="fee">Fee: 1 sSCRT</div>
         <img class="return" src="@/assets/BackArrow.svg" alt="Back" v-on:click="ReturnHome">
@@ -18,6 +18,7 @@
 
 
 <script>
+import { getSigningClient } from '../utils/keplrHelper'
 import TxSubmit from './TxSubmit.vue'
 
 
@@ -29,6 +30,35 @@ export default {
     methods: {
         ReturnHome: function() {
             this.$emit('ReturnHome')
+        },
+        ExecuteCloak: async function() {
+            console.log("execute click", this.destination)
+            if (!this.$store.getters.hasSigningClient){
+                this.$store.dispatch("setSigningClient", await getSigningClient("pulsar-2"));
+                console.log(this.$store.state)
+            }
+            let amount = this.amount*1000000
+            
+            //todo verify address before executing
+            const cloakMsg = {
+                receive_seed : {
+                    recipient: this.destination
+                }
+            }; 
+            console.log(cloakMsg);
+
+            const sendMsg = {
+                send: {
+                    amount:amount.toString(),
+                    recipient: "secret1ge8y0nksu3lyfyj6uzlee95ejyrqxz37kfm6nn",
+                    msg: Buffer.from(JSON.stringify(cloakMsg)).toString('base64')        
+                }
+            }
+
+            let response = await this.$store.state.secretJs.execute("secret12uqy5szfp62c55wp7ft24fu7de0c6xw3tz5hr6", sendMsg);
+            console.log(response)
+            let data = await this.$store.state.secretJs.checkTx(response.transactionHash)
+            console.log(data)
         }
     }
     

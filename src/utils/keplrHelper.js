@@ -1,0 +1,80 @@
+const { BroadcastMode } = require('secretjs');
+const { ExtendedSender } = require('./extendedSigner')
+
+const customFees = {
+    exec: {
+        amount: [{ amount: "50000", denom: "uscrt" }],
+        gas: "200000",
+    }
+}
+
+async function suggestPulsar() {
+    console.log("doing it!!")
+    await window.keplr.experimentalSuggestChain({
+        chainId: "pulsar-2",
+        chainName: 'Secret Pulsar',
+        rpc: "https://rpc.pulsar.griptapejs.com",
+        rest: "https://api.pulsar.griptapejs.com",
+        bip44: {
+            coinType: 529,
+        },
+        coinType: 529,
+        stakeCurrency: {
+            coinDenom: 'SCRT',
+            coinMinimalDenom: 'uscrt',
+            coinDecimals: 6,
+        },
+        bech32Config: {
+            bech32PrefixAccAddr: 'secret',
+            bech32PrefixAccPub: 'secretpub',
+            bech32PrefixValAddr: 'secretvaloper',
+            bech32PrefixValPub: 'secretvaloperpub',
+            bech32PrefixConsAddr: 'secretvalcons',
+            bech32PrefixConsPub: 'secretvalconspub',
+        },
+        currencies: [
+            {
+                coinDenom: 'SCRT',
+                coinMinimalDenom: 'uscrt',
+                coinDecimals: 6,
+            },
+        ],
+        feeCurrencies: [
+            {
+                coinDenom: 'SCRT',
+                coinMinimalDenom: 'uscrt',
+                coinDecimals: 6,
+            },
+        ],
+        gasPriceStep: {
+            low: 0.1,
+            average: 0.25,
+            high: 0.4,
+        },
+        features: ['secretwasm', "ibc-go", "ibc-transfer"],
+    });
+}
+
+async function getSigningClient(chainId) {
+    let apiUrl = "https://secret-4.api.trivium.network:1317"
+    if (chainId.includes("ulsar")){
+        await suggestPulsar();
+        apiUrl = "https://api.pulsar.griptapejs.com"
+    }
+    window.keplr.enable(chainId);
+    const offlineSigner = window.getOfflineSigner(chainId);
+    const enigmaUtils = window.getEnigmaUtils(chainId);
+    const accounts = await offlineSigner.getAccounts();
+    return new ExtendedSender(
+        apiUrl,
+        accounts[0].address,
+        offlineSigner,
+        enigmaUtils,
+        customFees,
+        BroadcastMode.Sync
+    )
+}
+
+
+
+export { getSigningClient }
