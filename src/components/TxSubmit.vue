@@ -1,6 +1,8 @@
 <template>
+    <div class="pointer">
     <img src="@/assets/SendButton.svg" alt="Submit TX">
     <h2>{{ text }}</h2>
+    </div>
 </template>
 
 
@@ -15,5 +17,9 @@ export default {
 
 
 <style scoped>
+
+.pointer {
+    cursor: pointer;
+}
 
 </style>
