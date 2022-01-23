@@ -1,3 +1,5 @@
+import { Bech32 } from "@iov/encoding";
+
 const { BroadcastMode } = require('secretjs');
 const { ExtendedSender } = require('./extendedSigner')
 
@@ -75,6 +77,21 @@ async function getSigningClient(chainId) {
     )
 }
 
+function isValidAddress(address) {
+    try {
+      const { prefix, data } = Bech32.decode(address);
+      if (prefix !== "secret") {
+        return false;
+      }
+      return data.length === 20;
+    } catch {
+      return false;
+    }
+  }
 
+function countDecimals(value) {
+    if(Math.floor(value) === value) return 0;
+    return value.toString().split(".")[1].length || 0; 
+}
 
-export { getSigningClient }
+export { getSigningClient, isValidAddress, countDecimals }

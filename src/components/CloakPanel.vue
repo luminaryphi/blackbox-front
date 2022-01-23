@@ -18,47 +18,112 @@
 
 
 <script>
-import { getSigningClient } from '../utils/keplrHelper'
+import { getSigningClient, isValidAddress, countDecimals } from '../utils/keplrHelper'
 import TxSubmit from './TxSubmit.vue'
-
+import { useToast } from "vue-toastification";
 
 export default {
     name: 'CloakPanel',
     components: {
         TxSubmit
     },
+    setup() {
+      // Get toast interface
+      const toast = useToast();
+
+      // Make it available inside methods
+      return { toast }
+    },
     methods: {
         ReturnHome: function() {
             this.$emit('ReturnHome')
         },
         ExecuteCloak: async function() {
-            console.log("execute click", this.destination)
-            if (!this.$store.getters.hasSigningClient){
-                this.$store.dispatch("setSigningClient", await getSigningClient("pulsar-2"));
-                console.log(this.$store.state)
-            }
-            let amount = this.amount*1000000
-            
-            //todo verify address before executing
-            const cloakMsg = {
-                receive_seed : {
-                    recipient: this.destination
-                }
-            }; 
-            console.log(cloakMsg);
+            try{
 
-            const sendMsg = {
-                send: {
-                    amount:amount.toString(),
-                    recipient: "secret1ge8y0nksu3lyfyj6uzlee95ejyrqxz37kfm6nn",
-                    msg: Buffer.from(JSON.stringify(cloakMsg)).toString('base64')        
+                //ensure signing client is in glibal state
+                if (!this.$store.getters.hasSigningClient){
+                    this.$store.dispatch("setSigningClient", await getSigningClient("pulsar-2"));
                 }
+                
+                //cancel if recipient is not a valid address
+                if (!isValidAddress(this.destination.trim())){
+                    this.toast.error(`Invalid Recipient Address: ${this.destination.trim()}`, {
+                        timeout: 6000
+                    })
+                    return false;
+                }
+
+                //cancel if invalid number
+                if (isNaN(this.amount.trim())){
+                    this.toast.error(`Invalid Amount: ${this.amount.trim()}`, {
+                        timeout: 6000
+                    })
+                    return false;
+                }
+
+                //cancel if more than 6 decimals
+                if (countDecimals(this.amount.trim()) > 6){
+                    this.toast.error(`Amount "${this.amount.trim()}" has too many decimals. sSCRT only has 6 decimal places.`, {
+                        timeout: 6000
+                    })
+                    return false;
+                }
+
+                //set amount in uscrt
+                let amount = this.amount.trim()*1000000
+
+                //message for the cloak contract
+                const cloakMsg = {
+                    receive_seed : {
+                        recipient: this.destination.trim()
+                    }
+                }; 
+
+                //send message for the sSCRT contract
+                const sendMsg = {
+                    send: {
+                        amount: amount.toString(),
+                        recipient: "secret1ge8y0nksu3lyfyj6uzlee95ejyrqxz37kfm6nn",
+                        msg: Buffer.from(JSON.stringify(cloakMsg)).toString('base64')
+                    }
+                }
+
+                //"Sync" broadcast mode returns tx hash only (or error if it failed to enter the mempool)
+                let response = await this.$store.state.secretJs.execute("secret12uqy5szfp62c55wp7ft24fu7de0c6xw3tz5hr6", sendMsg);
+                if (response.code){
+                    this.toast.error(`Transaction Failed: ${response.raw_log}`, {
+                        timeout: 8000
+                    })
+                } else {
+                    this.toast("Transaction Processing...", {
+                        id: "tx-processing",
+                        timeout: false,
+                        closeButton: false
+                    });
+                }
+
+                //poll tx's endpoint every 1000ms up to 5 times to check when tx is processed. Returns full tx object
+                let data = await this.$store.state.secretJs.checkTx(response.transactionHash,1000,5)
+                console.log(data)
+                this.toast.dismiss("tx-processing");
+
+                //if error
+                if (data.code){
+                    this.toast.error(`Transaction Failed: ${data.raw_log}`, {
+                        timeout: 8000
+                    })
+                } else {
+                    this.toast.success("Transaction Succeeded!", {
+                        timeout: 8000
+                    });
+                }
+            } catch(e) {
+                this.toast.error(`Unknown error occured: ${e}`, {
+                    timeout: 8000
+                })
             }
 
-            let response = await this.$store.state.secretJs.execute("secret12uqy5szfp62c55wp7ft24fu7de0c6xw3tz5hr6", sendMsg);
-            console.log(response)
-            let data = await this.$store.state.secretJs.checkTx(response.transactionHash)
-            console.log(data)
         }
     }
     
