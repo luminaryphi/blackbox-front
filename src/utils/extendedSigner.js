@@ -54,9 +54,10 @@ export class ExtendedSender extends SigningCosmWasmClient {
 
         } catch (e) {
             console.error(`Timed out while waiting for transaction: ${e}`);
+            throw(`Timed out while waiting for transaction: ${e}`)
             //let error = new CustomError(`Timed out while waiting for transaction`);
             //error.txHash = tx.transactionHash;
-            throw e;
+            //throw e;
         }
     }
 

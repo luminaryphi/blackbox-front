@@ -1,10 +1,10 @@
 <template>
     <div class="action-box popup">
-        <div class="token-data" @click="ConfirmToken('sSCRT', 'scrt.svg', 'secret1k0jntykt7e4g3y88ltc60czgjuqdy4c9e8fzek')">
+        <div class="token-data" @click="ConfirmToken('sSCRT', 'scrt.svg', 'secret1k0jntykt7e4g3y88ltc60czgjuqdy4c9e8fzek', 6)">
             <img class="token" src="/tokenIcons/scrt.svg" alt="">
             <div>sSCRT</div>
         </div>
-        <div class="token-data" @click="ConfirmToken('sUSDT', 'usdt_ethereum.svg', 'secret18wpjn83dayu4meu6wnn29khfkwdxs7kyrz9c8f')">
+        <div class="token-data" @click="ConfirmToken('sUSDT', 'usdt_ethereum.svg', 'secret18wpjn83dayu4meu6wnn29khfkwdxs7kyrz9c8f', 6)">
             <img class="token" src="/tokenIcons/usdt_ethereum.svg" alt="">
             <div>sUSDT</div>
         </div>
@@ -34,8 +34,8 @@ export default {
         ReturnHome: function() {
             this.$emit('ReturnHome')
         },
-        ConfirmToken: function(denom, img, address) {
-            this.$emit(`ConfirmToken`, denom, img, address)
+        ConfirmToken: function(denom, img, address, decimals) {
+            this.$emit(`ConfirmToken`, denom, img, address, decimals)
         }
     }
     

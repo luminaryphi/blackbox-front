@@ -7,13 +7,13 @@
                 <span class="unselected" v-on:click="ToReceive">Receive</span>
             </div>
             <h1>Alias</h1>
-            <input type="text" placeholder="..." required>
+            <input type="text" placeholder="..." required v-model="destination">
             <h1>Amount</h1>
             <img class="token" v-on:click="SelectToken" :src="TokenImage" alt="">
-            <input type="text" :placeholder="TokenDenom" required>
+            <input type="text" :placeholder="TokenDenom" required v-model="amount">
         </div>
         <div class="txbutton">
-            <TxSubmit text="Send" />
+            <a @Click=ExecuteSend><TxSubmit text="Send" /></a>
         </div>
         <div class="fee">Fee: 0.04%</div>
         <img class="return" src="@/assets/BackArrow.svg" alt="Back" v-on:click="ReturnHome">
@@ -24,8 +24,10 @@
 
 
 <script>
+import { getSigningClient, countDecimals } from '../utils/keplrHelper'
 import TxSubmit from './TxSubmit.vue'
 import TokenPanel from './TokenPanel.vue'
+import { useToast } from "vue-toastification";
 
 
 export default {
@@ -38,9 +40,17 @@ export default {
         return {
             TokenSelect: false,
             TokenDenom: "sSCRT",
-            TokenAddress: "secret1k0jntykt7e4g3y88ltc60czgjuqdy4c9e8fzek",
-            TokenImage: "/tokenIcons/scrt.svg"
+            TokenAddress: "secret12uqy5szfp62c55wp7ft24fu7de0c6xw3tz5hr6", //secret1k0jntykt7e4g3y88ltc60czgjuqdy4c9e8fzek",
+            TokenImage: "/tokenIcons/scrt.svg",
+            TokenDecimals: 6
         }
+    },
+    setup() {
+      // Get toast interface
+      const toast = useToast();
+
+      // Make it available inside methods
+      return { toast }
     },
     methods: {
         ReturnHome: function() {
@@ -55,11 +65,98 @@ export default {
         CancelSelectToken: function() {
             this.TokenSelect = false
         },
-        UseToken: function(newDenom, newImg, newAddress) {
+        UseToken: function(newDenom, newImg, newAddress, newDecimals) {
             this.TokenSelect = false
             this.TokenDenom = newDenom
             this.TokenImage = "/tokenIcons/" + newImg
             this.TokenAddress = newAddress
+            this.TokenDecimals = newDecimals
+        },
+        ExecuteSend: async function() {
+            try{
+
+                //ensure signing client is in glibal state
+                if (!this.$store.getters.hasSigningClient){
+                    this.$store.dispatch("setSigningClient", await getSigningClient("pulsar-2"));
+                }
+
+                //cancel if no destination
+                if (!this.destination && !this.destination.trim()){
+                    this.toast.error(`Please enter a destination alias.`, {
+                        timeout: 6000
+                    })
+                    return false;
+                }
+
+                //cancel if invalid number
+                if (!this.amount || isNaN(this.amount.trim())){
+                    this.toast.error(`Invalid Amount: ${this.amount.trim()}`, {
+                        timeout: 6000
+                    })
+                    return false;
+                }
+
+                //cancel if more than token's decimals
+                if (countDecimals(this.amount.trim()) > this.TokenDecimals){
+                    this.toast.error(`Amount "${this.amount.trim()}" has too many decimals. ${this.TokenDenom} only has ${this.TokenDecimals} decimal places.`, {
+                        timeout: 6000
+                    })
+                    return false;
+                }
+
+                //set amount in uTOKEN
+                let amount = this.amount.trim() * 10**(this.TokenDecimals)
+
+                //message for the deaddrop contract
+                const ddMsg = {
+                    receive_tokens: {
+                        recipient: this.destination.trim()
+                    }
+                }; 
+
+                //send message for the token contract
+                const sendMsg = {
+                    send: {
+                        amount: amount.toString(),
+                        recipient: "secret1py27z7zywjn8ry4a6m9eajkpknhx7mqn24l3ug", //deaddrop contract
+                        msg: Buffer.from(JSON.stringify(ddMsg)).toString('base64')
+                    }
+                }
+
+                //"Sync" broadcast mode returns tx hash only (or error if it failed to enter the mempool)
+                let response = await this.$store.state.secretJs.execute(this.TokenAddress, sendMsg);
+                if (response.code){
+                    this.toast.error(`Transaction Failed: ${response.raw_log}`, {
+                        timeout: 8000
+                    })
+                } else {
+                    this.toast("Transaction Processing...", {
+                        id: "tx-processing",
+                        timeout: false,
+                        closeButton: false
+                    });
+                }
+
+                //poll tx's endpoint every 1000ms up to 5 times to check when tx is processed. Returns full tx object
+                let data = await this.$store.state.secretJs.checkTx(response.transactionHash,1000,5)
+                console.log(data)
+                this.toast.dismiss("tx-processing");
+
+                //if error
+                if (data.code){
+                    this.toast.error(`Transaction Failed: ${data.raw_log}`, {
+                        timeout: 8000
+                    })
+                } else {
+                    this.toast.success("Transaction Succeeded!", {
+                        timeout: 8000
+                    });
+                }
+            } catch(e) {
+                this.toast.error(`Unknown error occured: ${e}`, {
+                    timeout: 8000
+                })
+            }
         }
     }
     
