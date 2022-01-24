@@ -1,14 +1,14 @@
 <template>
     <div class="action-box popup">
-        <div class="token-data" @click="ConfirmToken('sSCRT', 'scrt.svg', 'secret1k0jntykt7e4g3y88ltc60czgjuqdy4c9e8fzek', 6)">
+        <div class="token-data pointer" @click="ConfirmToken('sSCRT', 'scrt.svg', 'secret1k0jntykt7e4g3y88ltc60czgjuqdy4c9e8fzek', 6)">
             <img class="token" src="/tokenIcons/scrt.svg" alt="">
             <div>sSCRT</div>
         </div>
-        <div class="token-data" @click="ConfirmToken('sUSDT', 'usdt_ethereum.svg', 'secret18wpjn83dayu4meu6wnn29khfkwdxs7kyrz9c8f', 6)">
+        <div class="token-data pointer" @click="ConfirmToken('sUSDT', 'usdt_ethereum.svg', 'secret18wpjn83dayu4meu6wnn29khfkwdxs7kyrz9c8f', 6)">
             <img class="token" src="/tokenIcons/usdt_ethereum.svg" alt="">
             <div>sUSDT</div>
         </div>
-        <img class="return" src="@/assets/BackArrow.svg" alt="Back" v-on:click="ReturnHome">
+        <img class="return pointer" src="@/assets/BackArrow.svg" alt="Back" v-on:click="ReturnHome">
 
     </div>
 </template>
@@ -105,6 +105,8 @@ input {
     filter: brightness(25%);
 }
 
-
+.pointer {
+    cursor: pointer;
+}
 
 </style>

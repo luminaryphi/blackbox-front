@@ -21,7 +21,7 @@ export class ExtendedSender extends SigningCosmWasmClient {
     }
 
     //convert tx logs into key-value pairs
-    processLogs = async(tx) => {
+    processLogs = (tx) => {
         let logs = {};
         tx.logs[0].events[1].attributes.map((obj) => { logs[obj.key.trim()] = obj.value.trim() });
         tx.kv_logs=logs;
@@ -47,8 +47,11 @@ export class ExtendedSender extends SigningCosmWasmClient {
                 }; 
             }
 
+            let data=this.decodeResponse(res);
+            data=this.processLogs(data);
+            console.log(data)
             return {
-                ...res,
+                ...data,
                 transactionHash: txHash,
             };
 

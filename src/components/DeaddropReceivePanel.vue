@@ -2,7 +2,7 @@
     <form class="action-box controls">
         <div class="input-section">
             <div class="tx-type-section">
-                <span class="unselected" v-on:click="ToSend">Send</span>
+                <span class="unselected pointer" v-on:click="ToSend">Send</span>
                 <span> / </span>
                 <span class="selected">Receive</span>
             </div>
@@ -13,7 +13,7 @@
             <a @Click=ExecuteReceive><TxSubmit text="Register" /></a>
         </div>
         <div class="fee"></div>
-        <img class="return" src="@/assets/BackArrow.svg" alt="Back" v-on:click="ReturnHome">
+        <img class="return pointer" src="@/assets/BackArrow.svg" alt="Back" v-on:click="ReturnHome">
     </form>
 </template>
 
@@ -69,7 +69,7 @@ export default {
                 const sendMsg = {
                     send: {
                         amount: "0",
-                        recipient: "secret1py27z7zywjn8ry4a6m9eajkpknhx7mqn24l3ug",
+                        recipient: "secret1y27upwfdnfk7fl579qy6wh00dtzhe6v9gycaju", //deaddrop address
                         msg: Buffer.from(JSON.stringify(setMsg)).toString('base64')
                     }
                 }
@@ -196,6 +196,8 @@ input {
     filter: brightness(25%);
 }
 
-
+.pointer {
+    cursor: pointer;
+}
 
 </style>

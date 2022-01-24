@@ -1,5 +1,5 @@
 <template>
-    <button class="action-box">{{ text }}</button>
+    <button class="action-box" v-bind:class="getClass()">{{ text }}</button>
 </template>
 
 
@@ -8,6 +8,15 @@ export default {
     name: 'Button',
     props: {
         text: String,
+        pointer: Boolean,
+        disabled: Boolean
+    },
+    methods:{
+        getClass(){
+            return {
+                '': this.disabled,  
+                'enabled': !this.disabled}
+        }
     }
 }
 </script>
@@ -31,6 +40,14 @@ export default {
         left: 1024px;
         top: 192px;
         margin: 30px;
+        
+    }
+
+    .enabled {
+        cursor: pointer;
+    }
+    .enabled:hover {
+        filter: brightness(25%);
     }
 
 </style>

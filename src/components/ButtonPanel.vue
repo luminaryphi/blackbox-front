@@ -7,7 +7,7 @@
             <Button v-on:click="UseDeaddrop" text="DeadDrop" />
         </div>
         <div>
-            <Button text="???" />
+            <Button text="???"  disabled="true" />
         </div>
     </div>
     
@@ -35,8 +35,6 @@ export default {
 
 <style scoped>
 
-Button:hover {
-    filter: brightness(25%);
-}
+
 
 </style>

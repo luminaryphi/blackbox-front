@@ -11,7 +11,7 @@
             <a @click=ExecuteCloak><TxSubmit text="Send" /></a>
         </div>
         <div class="fee">Fee: 1 sSCRT</div>
-        <img class="return" src="@/assets/BackArrow.svg" alt="Back" v-on:click="ReturnHome">
+        <img class="return pointer" src="@/assets/BackArrow.svg" alt="Back" v-on:click="ReturnHome">
     </form>
 </template>
 
@@ -201,6 +201,8 @@ input {
     filter: brightness(25%);
 }
 
-
+.pointer {
+    cursor: pointer;
+}
 
 </style>

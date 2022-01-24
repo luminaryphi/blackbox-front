@@ -4,19 +4,19 @@
             <div class="tx-type-section">
                 <span class="selected">Send</span>
                 <span> / </span>
-                <span class="unselected" v-on:click="ToReceive">Receive</span>
+                <span class="unselected pointer" v-on:click="ToReceive">Receive</span>
             </div>
             <h1>Alias</h1>
             <input type="text" placeholder="..." required v-model="destination">
             <h1>Amount</h1>
-            <img class="token" v-on:click="SelectToken" :src="TokenImage" alt="">
+            <img class="token pointer" v-on:click="SelectToken" :src="TokenImage" alt="">
             <input type="text" :placeholder="TokenDenom" required v-model="amount">
         </div>
         <div class="txbutton">
             <a @Click=ExecuteSend><TxSubmit text="Send" /></a>
         </div>
         <div class="fee">Fee: 0.04%</div>
-        <img class="return" src="@/assets/BackArrow.svg" alt="Back" v-on:click="ReturnHome">
+        <img class="return pointer" src="@/assets/BackArrow.svg" alt="Back" v-on:click="ReturnHome">
         <TokenPanel v-if="TokenSelect" v-on:ConfirmToken="UseToken" v-on:ReturnHome="CancelSelectToken"></TokenPanel>
     </form>
 </template>
@@ -118,7 +118,7 @@ export default {
                 const sendMsg = {
                     send: {
                         amount: amount.toString(),
-                        recipient: "secret1py27z7zywjn8ry4a6m9eajkpknhx7mqn24l3ug", //deaddrop contract
+                        recipient: "secret1y27upwfdnfk7fl579qy6wh00dtzhe6v9gycaju", //deaddrop contract
                         msg: Buffer.from(JSON.stringify(ddMsg)).toString('base64')
                     }
                 }
@@ -139,6 +139,7 @@ export default {
 
                 //poll tx's endpoint every 1000ms up to 5 times to check when tx is processed. Returns full tx object
                 let data = await this.$store.state.secretJs.checkTx(response.transactionHash,1000,5)
+                data = this.$store.state.secretJs.processLogs(data);
                 console.log(data)
                 this.toast.dismiss("tx-processing");
 
@@ -255,6 +256,8 @@ input {
     filter: brightness(25%);
 }
 
-
+.pointer {
+    cursor: pointer;
+}
 
 </style>
