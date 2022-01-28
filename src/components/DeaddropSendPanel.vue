@@ -7,13 +7,16 @@
                 <span class="unselected pointer" v-on:click="ToReceive">Receive</span>
             </div>
             <h1>Alias</h1>
-            <input type="text" placeholder="..." required v-model="destination">
+            <input type="text" placeholder="..." required v-model="state.destination">
             <h1>Amount</h1>
             <img class="token pointer" v-on:click="SelectToken" :src="TokenImage" alt="">
-            <input type="text" :placeholder="TokenDenom" required v-model="amount">
+            <input type="text" :placeholder="TokenDenom" required v-model="state.amount">
         </div>
-        <div class="txbutton">
+        <div class="txbutton" v-if="!state.loading">
             <a @Click=ExecuteSend><TxSubmit text="Send" /></a>
+        </div>
+        <div class="spinner" v-else>
+            <i class="c-inline-spinner" />
         </div>
         <div class="fee">Fee: 0.04%</div>
         <img class="return pointer" src="@/assets/BackArrow.svg" alt="Back" v-on:click="ReturnHome">
@@ -38,11 +41,17 @@ export default {
     },
     data() {
         return {
+            state: {
+                loading: false,
+                amount: null,
+                destination: null
+            },
             TokenSelect: false,
             TokenDenom: "sSCRT",
             TokenAddress: "secret12uqy5szfp62c55wp7ft24fu7de0c6xw3tz5hr6", //secret1k0jntykt7e4g3y88ltc60czgjuqdy4c9e8fzek",
             TokenImage: "/tokenIcons/scrt.svg",
-            TokenDecimals: 6
+            TokenDecimals: 6,
+
         }
     },
     setup() {
@@ -74,6 +83,8 @@ export default {
         },
         ExecuteSend: async function() {
             try{
+                //replace button with spinner
+                this.state.loading=true;
 
                 //ensure signing client is in glibal state
                 if (!this.$store.getters.hasSigningClient){
@@ -81,36 +92,49 @@ export default {
                 }
 
                 //cancel if no destination
-                if (!this.destination && !this.destination.trim()){
+                console.log(this.state.destination);
+                if (!this.state.destination || !this.state.destination.trim()){
                     this.toast.error(`Please enter a destination alias.`, {
                         timeout: 6000
                     })
+                    
+                    //show button again
+                    this.state.loading=false;
+
                     return false;
                 }
 
                 //cancel if invalid number
-                if (!this.amount || isNaN(this.amount.trim())){
-                    this.toast.error(`Invalid Amount: ${this.amount.trim()}`, {
+                if (!this.state.amount || !this.state.amount.trim() || isNaN(this.state.amount.trim())){
+                    this.toast.error(`Invalid Amount: "${this.state.amount}"`, {
                         timeout: 6000
                     })
+                    
+                    //show button again
+                    this.state.loading=false;
+
                     return false;
                 }
 
                 //cancel if more than token's decimals
-                if (countDecimals(this.amount.trim()) > this.TokenDecimals){
-                    this.toast.error(`Amount "${this.amount.trim()}" has too many decimals. ${this.TokenDenom} only has ${this.TokenDecimals} decimal places.`, {
+                if (countDecimals(this.state.amount.trim()) > this.TokenDecimals){
+                    this.toast.error(`Amount "${this.state.amount.trim()}" has too many decimals. ${this.TokenDenom} only has ${this.TokenDecimals} decimal places.`, {
                         timeout: 6000
                     })
+                    
+                    //show button again
+                    this.state.loading=false;
+
                     return false;
                 }
 
                 //set amount in uTOKEN
-                let amount = this.amount.trim() * 10**(this.TokenDecimals)
+                let amount = this.state.amount.trim() * 10**(this.TokenDecimals)
 
                 //message for the deaddrop contract
                 const ddMsg = {
                     receive_tokens: {
-                        recipient: this.destination.trim()
+                        recipient: this.state.destination.trim()
                     }
                 }; 
 
@@ -118,7 +142,7 @@ export default {
                 const sendMsg = {
                     send: {
                         amount: amount.toString(),
-                        recipient: "secret1y27upwfdnfk7fl579qy6wh00dtzhe6v9gycaju", //deaddrop contract
+                        recipient: "secret1rlnclsly93s05csfv884effgky9nmh5j8tvse2", //deaddrop contract
                         msg: Buffer.from(JSON.stringify(ddMsg)).toString('base64')
                     }
                 }
@@ -129,6 +153,13 @@ export default {
                     this.toast.error(`Transaction Failed: ${response.raw_log}`, {
                         timeout: 8000
                     })
+
+                    //show button again
+                    this.state.loading=false;
+
+                    //stop execution
+                    return false;
+
                 } else {
                     this.toast("Transaction Processing...", {
                         id: "tx-processing",
@@ -138,10 +169,12 @@ export default {
                 }
 
                 //poll tx's endpoint every 1000ms up to 5 times to check when tx is processed. Returns full tx object
-                let data = await this.$store.state.secretJs.checkTx(response.transactionHash,1000,5)
-                data = this.$store.state.secretJs.processLogs(data);
-                console.log(data)
+                const data = await this.$store.state.secretJs.checkTx(response.transactionHash,1000,5)
+                console.log(data);
                 this.toast.dismiss("tx-processing");
+
+                //show button again
+                this.state.loading=false;
 
                 //if error
                 if (data.code){
@@ -157,6 +190,9 @@ export default {
                 this.toast.error(`Unknown error occured: ${e}`, {
                     timeout: 8000
                 })
+
+                //show button again
+                this.state.loading=false;
             }
         }
     }
@@ -167,6 +203,16 @@ export default {
 
 
 <style scoped>
+@import "../assets/spinner.css";
+
+.spinner {
+    position: fixed;
+    left: 50%;
+    bottom: 15%;
+    transform: translate(-50%, -50%);
+    margin: 0 auto;
+
+}
 
 .controls {
     width: 521px;

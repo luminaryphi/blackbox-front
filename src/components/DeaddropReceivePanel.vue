@@ -7,10 +7,17 @@
                 <span class="selected">Receive</span>
             </div>
             <h1>Alias</h1>
-            <input type="text" placeholder="optional" v-model="alias">
+            <input type="text" placeholder="optional" v-model="state.alias">
         </div>
-        <div class="txbutton">
+        <div class="output-section" v-if="state.outAlias">
+            <h2>Your alias is:</h2>
+            <span class="output-alias">{{ state.outAlias }}</span>
+        </div>
+        <div class="txbutton" v-if="!state.loading">
             <a @Click=ExecuteReceive><TxSubmit text="Register" /></a>
+        </div>
+        <div class="spinner" v-else>
+            <i class="c-inline-spinner" />
         </div>
         <div class="fee"></div>
         <img class="return pointer" src="@/assets/BackArrow.svg" alt="Back" v-on:click="ReturnHome">
@@ -29,10 +36,19 @@ export default {
     components: {
         TxSubmit
     },
+    data() {
+        return {
+            state: {
+                outAlias: null,
+                loading: false,
+                alias: null
+            }
+        }
+    },
     setup() {
       // Get toast interface
       const toast = useToast();
-
+      
       // Make it available inside methods
       return { toast }
     },
@@ -45,7 +61,7 @@ export default {
         },
         ExecuteReceive: async function() {
             try{
-
+                this.state.loading= true;
                 //ensure signing client is in glibal state
                 if (!this.$store.getters.hasSigningClient){
                     this.$store.dispatch("setSigningClient", await getSigningClient("pulsar-2"));
@@ -53,10 +69,10 @@ export default {
 
                 //message for the deaddrop contract
                 let setMsg;
-                if (this.alias && this.alias.trim()){
+                if (this.state.alias && this.state.alias.trim()){
                     setMsg = {
                         set_alias : {
-                            alias: this.alias.trim()
+                            alias: this.state.alias.trim()
                         }
                     }; 
                 } else {
@@ -69,7 +85,7 @@ export default {
                 const sendMsg = {
                     send: {
                         amount: "0",
-                        recipient: "secret1y27upwfdnfk7fl579qy6wh00dtzhe6v9gycaju", //deaddrop address
+                        recipient: "secret1rlnclsly93s05csfv884effgky9nmh5j8tvse2", //deaddrop address
                         msg: Buffer.from(JSON.stringify(setMsg)).toString('base64')
                     }
                 }
@@ -89,9 +105,11 @@ export default {
                 }
 
                 //poll tx's endpoint every 1000ms up to 10 times to check when tx is processed. Returns full tx object
-                let data = await this.$store.state.secretJs.checkTx(response.transactionHash,1000,10)
-                console.log(data)
+                const data = await this.$store.state.secretJs.checkTx(response.transactionHash,1000,10)
+                const logs = this.$store.state.secretJs.processLogs(data);
+                console.log(logs.kv_logs.alias)
                 this.toast.dismiss("tx-processing");
+                this.state.loading= false;
 
                 //if error
                 if (data.code){
@@ -102,8 +120,10 @@ export default {
                     this.toast.success("Transaction Succeeded!", {
                         timeout: 8000
                     });
+                    this.state.outAlias = logs.kv_logs.alias
                 }
             } catch(e) {
+                this.state.loading= false;
                 this.toast.error(`Unknown error occured: ${e}`, {
                     timeout: 8000
                 })
@@ -118,6 +138,7 @@ export default {
 
 
 <style scoped>
+@import "../assets/spinner.css";
 
 .controls {
     width: 521px;
@@ -137,6 +158,17 @@ export default {
 
 .input-section {
     padding-top: 20%;
+}
+
+.output-section {
+    padding-top: 10%;
+}
+
+.output-alias {
+    display: block;
+    word-wrap: break-word;
+    width: 90%;
+    margin: auto;
 }
 
 .selected {
@@ -171,6 +203,14 @@ input {
     filter: brightness(25%);
 }
 
+.spinner {
+    position: fixed;
+    left: 50%;
+    bottom: 15%;
+    transform: translate(-50%, -50%);
+    margin: 0 auto;
+
+}
 
 .fee {
     position: fixed;

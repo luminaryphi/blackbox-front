@@ -2,13 +2,16 @@
     <form class="action-box controls">
         <div class="input-section">
             <h1>Address</h1>
-            <input type="text" v-model="destination" placeholder="secret..." required>
+            <input type="text" v-model="state.destination" placeholder="secret..." required>
             <h1>Amount</h1>
             <img class="token" src="/tokenIcons/scrt.svg" alt="">
-            <input type="text" v-model="amount" placeholder="sSCRT" required>
+            <input type="text" v-model="state.amount" placeholder="sSCRT" required>
         </div>
-        <div class="txbutton">
+        <div class="txbutton" v-if="!state.loading">
             <a @click=ExecuteCloak><TxSubmit text="Send" /></a>
+        </div>
+        <div class="spinner" v-else>
+            <i class="c-inline-spinner" />
         </div>
         <div class="fee">Fee: 1 sSCRT</div>
         <img class="return pointer" src="@/assets/BackArrow.svg" alt="Back" v-on:click="ReturnHome">
@@ -27,6 +30,15 @@ export default {
     components: {
         TxSubmit
     },
+    data() {
+        return {
+            state: {
+                loading: false,
+                amount: "",
+                destination: ""
+            }
+        }
+    },
     setup() {
       // Get toast interface
       const toast = useToast();
@@ -40,6 +52,8 @@ export default {
         },
         ExecuteCloak: async function() {
             try{
+                //replace button with spinner
+                this.state.loading=true;
 
                 //ensure signing client is in glibal state
                 if (!this.$store.getters.hasSigningClient){
@@ -47,36 +61,48 @@ export default {
                 }
                 
                 //cancel if recipient is not a valid address
-                if (!isValidAddress(this.destination.trim())){
-                    this.toast.error(`Invalid Recipient Address: ${this.destination.trim()}`, {
+                if (!this.state.destination.trim() || !isValidAddress(this.state.destination.trim())){
+                    this.toast.error(`Invalid Recipient Address: ${this.state.destination.trim()}`, {
                         timeout: 6000
                     })
+                                        
+                    //show button again
+                    this.state.loading=false;
+
                     return false;
                 }
 
                 //cancel if invalid number
-                if (isNaN(this.amount.trim())){
-                    this.toast.error(`Invalid Amount: ${this.amount.trim()}`, {
+                if (!this.state.amount.trim() || isNaN(this.state.amount.trim())){
+                    this.toast.error(`Invalid Amount: ${this.state.amount.trim()}`, {
                         timeout: 6000
                     })
+                                        
+                    //show button again
+                    this.state.loading=false;
+
                     return false;
                 }
 
                 //cancel if more than 6 decimals
-                if (countDecimals(this.amount.trim()) > 6){
-                    this.toast.error(`Amount "${this.amount.trim()}" has too many decimals. sSCRT only has 6 decimal places.`, {
+                if (countDecimals(this.state.amount.trim()) > 6){
+                    this.toast.error(`Amount "${this.state.amount.trim()}" has too many decimals. sSCRT only has 6 decimal places.`, {
                         timeout: 6000
                     })
+                                        
+                    //show button again
+                    this.state.loading=false;
+
                     return false;
                 }
 
                 //set amount in uscrt
-                let amount = this.amount.trim()*1000000
+                let amount = this.state.amount.trim()*1000000
 
                 //message for the cloak contract
                 const cloakMsg = {
                     receive_seed : {
-                        recipient: this.destination.trim()
+                        recipient: this.state.destination.trim()
                     }
                 }; 
 
@@ -95,6 +121,12 @@ export default {
                     this.toast.error(`Transaction Failed: ${response.raw_log}`, {
                         timeout: 8000
                     })
+                                        
+                    //show button again
+                    this.state.loading=false;
+
+                    return false;
+
                 } else {
                     this.toast("Transaction Processing...", {
                         id: "tx-processing",
@@ -107,6 +139,9 @@ export default {
                 let data = await this.$store.state.secretJs.checkTx(response.transactionHash,1000,5)
                 console.log(data)
                 this.toast.dismiss("tx-processing");
+                                    
+                //show button again
+                this.state.loading=false;
 
                 //if error
                 if (data.code){
@@ -122,6 +157,9 @@ export default {
                 this.toast.error(`Unknown error occured: ${e}`, {
                     timeout: 8000
                 })
+                                    
+                //show button again
+                this.state.loading=false;
             }
 
         }
@@ -133,6 +171,16 @@ export default {
 
 
 <style scoped>
+@import "../assets/spinner.css";
+
+.spinner {
+    position: fixed;
+    left: 50%;
+    bottom: 15%;
+    transform: translate(-50%, -50%);
+    margin: 0 auto;
+
+}
 
 .controls {
     width: 521px;
