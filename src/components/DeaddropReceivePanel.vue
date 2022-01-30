@@ -7,7 +7,7 @@
                 <span class="selected">Receive</span>
             </div>
             <h1>Alias</h1>
-            <input type="text" placeholder="optional" v-model="state.alias">
+            <input type="text" placeholder="optional (limit 1 custom per user)" v-model="state.alias">
         </div>
         <div class="output-section" v-if="state.outAlias">
             <h2>Your alias is:</h2>
