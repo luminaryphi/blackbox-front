@@ -11,7 +11,6 @@ const customFees = {
 }
 
 async function suggestPulsar() {
-    console.log("doing it!!")
     await window.keplr.experimentalSuggestChain({
         chainId: "pulsar-2",
         chainName: 'Secret Pulsar',
