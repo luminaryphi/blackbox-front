@@ -4,7 +4,7 @@
     <div>
       © 2022 
       <span><img class="triv-logo" src="@/assets/Trivium_white.svg" alt=""></span>
-      <a class="text-dark" href="https://triviumnode.com/">Trivium</a>
+      <a class="text-dark" href="https://trivium.network/">Trivium</a>
     </div>
     <!-- Copyright -->
   </footer>
