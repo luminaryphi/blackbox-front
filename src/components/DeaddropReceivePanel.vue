@@ -106,8 +106,6 @@ export default {
 
                 //poll tx's endpoint every 1000ms up to 10 times to check when tx is processed. Returns full tx object
                 const data = await this.$store.state.secretJs.checkTx(response.transactionHash,1000,10)
-                const logs = this.$store.state.secretJs.processLogs(data);
-                console.log(logs.kv_logs.alias)
                 this.toast.dismiss("tx-processing");
                 this.state.loading= false;
 
@@ -117,11 +115,14 @@ export default {
                         timeout: 8000
                     })
                 } else {
+                    const logs = this.$store.state.secretJs.processLogs(data);
+                    console.log(logs.kv_logs.alias)
                     this.toast.success("Transaction Succeeded!", {
                         timeout: 8000
                     });
                     this.state.outAlias = logs.kv_logs.alias
                 }
+                
             } catch(e) {
                 this.state.loading= false;
                 this.toast.error(`Unknown error occured: ${e}`, {
