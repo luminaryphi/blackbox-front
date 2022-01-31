@@ -6,6 +6,7 @@
             <h1>Amount</h1>
             <img class="token" src="/tokenIcons/scrt.svg" alt="">
             <input type="text" v-model="state.amount" placeholder="sSCRT" required>
+            <div class="withdraw">(Cancel Pending Transactions)</div>
         </div>
         <div class="txbutton" v-if="!state.loading">
             <a @click=ExecuteCloak><TxSubmit text="Send" /></a>
@@ -180,6 +181,15 @@ export default {
     transform: translate(-50%, -50%);
     margin: 0 auto;
 
+}
+
+.withdraw {
+    font-size: 90%;
+    margin-top: 30px;
+
+}
+.withdraw:hover {
+    filter: brightness(25%);
 }
 
 .controls {
