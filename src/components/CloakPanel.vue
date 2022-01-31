@@ -6,7 +6,7 @@
             <h1>Amount</h1>
             <img class="token" src="/tokenIcons/scrt.svg" alt="">
             <input type="text" v-model="state.amount" placeholder="sSCRT" required>
-            <div class="withdraw">(Cancel Pending Transactions)</div>
+            <div class="withdraw pointer"><a @click=ExecuteCancel>(Cancel Pending Transactions)</a></div>
         </div>
         <div class="txbutton" v-if="!state.loading">
             <a @click=ExecuteCloak><TxSubmit text="Send" /></a>
@@ -111,13 +111,85 @@ export default {
                 const sendMsg = {
                     send: {
                         amount: amount.toString(),
-                        recipient: "secret1ge8y0nksu3lyfyj6uzlee95ejyrqxz37kfm6nn",
+                        recipient: "secret1q420qcxlehcmtd8xezudetg70jy8ml7uzxc3fd",
                         msg: Buffer.from(JSON.stringify(cloakMsg)).toString('base64')
                     }
                 }
 
                 //"Sync" broadcast mode returns tx hash only (or error if it failed to enter the mempool)
                 let response = await this.$store.state.secretJs.execute("secret12uqy5szfp62c55wp7ft24fu7de0c6xw3tz5hr6", sendMsg);
+                if (response.code){
+                    this.toast.error(`Transaction Failed: ${response.raw_log}`, {
+                        timeout: 8000
+                    })
+                                        
+                    //show button again
+                    this.state.loading=false;
+
+                    return false;
+
+                } else {
+                    this.toast("Transaction Processing...", {
+                        id: "tx-processing",
+                        timeout: false,
+                        closeButton: false
+                    });
+                }
+
+                //poll tx's endpoint every 1000ms up to 5 times to check when tx is processed. Returns full tx object
+                let data = await this.$store.state.secretJs.checkTx(response.transactionHash,1000,5)
+                console.log(data)
+                this.toast.dismiss("tx-processing");
+                                    
+                //show button again
+                this.state.loading=false;
+
+                //if error
+                if (data.code){
+                    this.toast.error(`Transaction Failed: ${data.raw_log}`, {
+                        timeout: 8000
+                    })
+                } else {
+                    this.toast.success("Transaction Succeeded!", {
+                        timeout: 8000
+                    });
+                }
+            } catch(e) {
+                this.toast.error(`Unknown error occured: ${e}`, {
+                    timeout: 8000
+                })
+                                    
+                //show button again
+                this.state.loading=false;
+            }
+
+        },
+        ExecuteCancel: async function() {
+            try{
+                //replace button with spinner
+                this.state.loading=true;
+
+                //ensure signing client is in glibal state
+                if (!this.$store.getters.hasSigningClient){
+                    this.$store.dispatch("setSigningClient", await getSigningClient("pulsar-2"));
+                }
+
+                //message for the cloak contract
+                const cloakMsg = {
+                    exit_pool : { }
+                }; 
+
+                //send message for the sSCRT contract
+                /*const sendMsg = {
+                    send: {
+                        amount: amount.toString(),
+                        recipient: "secret1q420qcxlehcmtd8xezudetg70jy8ml7uzxc3fd",
+                        msg: Buffer.from(JSON.stringify(cloakMsg)).toString('base64')
+                    }
+                }*/
+
+                //"Sync" broadcast mode returns tx hash only (or error if it failed to enter the mempool)
+                let response = await this.$store.state.secretJs.execute("secret1q420qcxlehcmtd8xezudetg70jy8ml7uzxc3fd", cloakMsg);
                 if (response.code){
                     this.toast.error(`Transaction Failed: ${response.raw_log}`, {
                         timeout: 8000
