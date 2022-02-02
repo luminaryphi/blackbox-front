@@ -64,7 +64,7 @@ export default {
                 this.state.loading= true;
                 //ensure signing client is in glibal state
                 if (!this.$store.getters.hasSigningClient){
-                    this.$store.dispatch("setSigningClient", await getSigningClient("pulsar-2"));
+                    this.$store.dispatch("setSigningClient", await getSigningClient("secret-4"));
                 }
 
                 //message for the deaddrop contract
@@ -85,13 +85,13 @@ export default {
                 const sendMsg = {
                     send: {
                         amount: "0",
-                        recipient: "secret1rlnclsly93s05csfv884effgky9nmh5j8tvse2", //deaddrop address
+                        recipient: this.$store.state.deaddrop_address, //deaddrop address
                         msg: Buffer.from(JSON.stringify(setMsg)).toString('base64')
                     }
                 }
 
                 //"Sync" broadcast mode returns tx hash only (or error if it failed to enter the mempool)
-                let response = await this.$store.state.secretJs.execute("secret12uqy5szfp62c55wp7ft24fu7de0c6xw3tz5hr6", sendMsg);
+                let response = await this.$store.state.secretJs.execute(this.$store.state.token_address, sendMsg);
                 if (response.code){
                     this.toast.error(`Transaction Failed: ${response.raw_log}`, {
                         timeout: 8000

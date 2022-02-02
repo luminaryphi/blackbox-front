@@ -58,7 +58,7 @@ export default {
 
                 //ensure signing client is in glibal state
                 if (!this.$store.getters.hasSigningClient){
-                    this.$store.dispatch("setSigningClient", await getSigningClient("pulsar-2"));
+                    this.$store.dispatch("setSigningClient", await getSigningClient("secret-4"));
                 }
                 
                 //cancel if recipient is not a valid address
@@ -111,13 +111,13 @@ export default {
                 const sendMsg = {
                     send: {
                         amount: amount.toString(),
-                        recipient: "secret1q420qcxlehcmtd8xezudetg70jy8ml7uzxc3fd",
+                        recipient: this.$store.state.cloak_address, //cloak address
                         msg: Buffer.from(JSON.stringify(cloakMsg)).toString('base64')
                     }
                 }
 
                 //"Sync" broadcast mode returns tx hash only (or error if it failed to enter the mempool)
-                let response = await this.$store.state.secretJs.execute("secret12uqy5szfp62c55wp7ft24fu7de0c6xw3tz5hr6", sendMsg);
+                let response = await this.$store.state.secretJs.execute(this.$store.state.token_address, sendMsg);
                 if (response.code){
                     this.toast.error(`Transaction Failed: ${response.raw_log}`, {
                         timeout: 8000
@@ -171,7 +171,7 @@ export default {
 
                 //ensure signing client is in glibal state
                 if (!this.$store.getters.hasSigningClient){
-                    this.$store.dispatch("setSigningClient", await getSigningClient("pulsar-2"));
+                    this.$store.dispatch("setSigningClient", await getSigningClient("secret-4"));
                 }
 
                 //message for the cloak contract
@@ -183,13 +183,13 @@ export default {
                 /*const sendMsg = {
                     send: {
                         amount: amount.toString(),
-                        recipient: "secret1q420qcxlehcmtd8xezudetg70jy8ml7uzxc3fd",
+                        recipient: this.$store.state.cloak_address,
                         msg: Buffer.from(JSON.stringify(cloakMsg)).toString('base64')
                     }
                 }*/
 
                 //"Sync" broadcast mode returns tx hash only (or error if it failed to enter the mempool)
-                let response = await this.$store.state.secretJs.execute("secret1q420qcxlehcmtd8xezudetg70jy8ml7uzxc3fd", cloakMsg);
+                let response = await this.$store.state.secretJs.execute(this.$store.state.cloak_address, cloakMsg);
                 if (response.code){
                     this.toast.error(`Transaction Failed: ${response.raw_log}`, {
                         timeout: 8000
