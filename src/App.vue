@@ -56,8 +56,9 @@ body {
 .action-box {
   background: linear-gradient(180deg, #0B0D17 0%, rgba(112, 115, 131, 0) 100%);
   filter: drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25));
-  backdrop-filter: blur(64px);
+  backdrop-filter: blur(4px);
   border-radius: 100px;
+  box-shadow: inset 0 0 10px rgba(27, 253, 242, 0.4), 0 0 9px 3px rgba(27, 245, 253, 0.1);
 }
 
 </style>

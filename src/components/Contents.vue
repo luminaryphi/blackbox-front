@@ -73,7 +73,7 @@ export default {
 <style scoped>
 
 body {
-    background-image: linear-gradient(180deg, #C4C4C4 0%, rgba(196, 196, 196, 0) 40%), url('../assets/BlackboxBackground.png');
+    background-image: linear-gradient(180deg, #C4C4C4 0%, rgba(196, 196, 196, 0) 40%), url('../assets/BBBackground.png');
     background-size: cover;
     
     background-position: 0% 50%;

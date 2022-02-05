@@ -39,7 +39,7 @@ export default {
         border: 2px solid var(--green);
         background: linear-gradient(to right, rgba(27, 238, 253, 0.1) 1%, transparent 40%,transparent 60% , rgba(27, 238, 253, 0.1) 100%);
         color: var(--green);
-        box-shadow: inset 0 0 10px rgba(27, 253, 156, 0.4), 0 0 9px 3px rgba(27, 245, 253, 0.1);
+        box-shadow: inset 0 0 10px rgba(27, 253, 242, 0.4), 0 0 9px 3px rgba(27, 245, 253, 0.1);
 
         margin: 6vh;
         width: 30vh;
