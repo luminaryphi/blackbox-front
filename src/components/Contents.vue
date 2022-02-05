@@ -7,9 +7,9 @@
 
         <div class="info">
             <img src="@/assets/BlackBoxTitle.svg" alt="BlackBox" class="logo">
-            <div class="sub-title"><glitched-writer :text="subtitle" preset="encrypted"/></div>
+            <div class="sub-title"><glitched-writer :text="subtitle" preset="encrypted" :options="{ delay: [100,400] }"/></div>
             <!---<div class="description">{{ description }}</div>--->
-            <div class="description"><glitched-writer :text="description" preset="encrypted"/></div>
+            <div class="description"><glitched-writer :text="description" preset="encrypted" :options="{ delay: [100,400] }"/></div>
 
         </div>
     </body>
@@ -110,8 +110,8 @@ body {
 }
 
 .sub-title {
-    margin-top: 10px;
-    font-size: 54px;
+    margin-top: 3vh;
+    font-size: 6vh;
     line-height: 43px;
     text-align: left;
     color: whitesmoke;
@@ -122,15 +122,21 @@ body {
 
 
 .description {
-    font-size: 36px;
-    line-height: 43px;
+    font-size: 4vh;
+    line-height: 4vh;
     text-align: left;
-    margin-top: 20px;
+    margin-top: 3vh;
     word-break: normal;
     
 
 }
 
+.controls {
+    width: 55vh;
+    height: 70vh;
+    top: 181px;
+    
+}
 
 
 </style>

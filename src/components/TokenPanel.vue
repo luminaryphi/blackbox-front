@@ -92,16 +92,18 @@ export default {
     right: 0;
     top: 0;
     bottom: 0;
-    width: 521px;
-    height: 661px;
+    width: 55vh;
+    height: 70vh;
     background: #0B0D17;
 
 }
 
 
+
+
 .token-scroll{
     overflow-y: scroll;
-    height: 661px;
+    height: 100%;
     scrollbar-width: none;
 
 }

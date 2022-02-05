@@ -141,17 +141,12 @@ export default {
 <style scoped>
 @import "../assets/spinner.css";
 
-.controls {
-    width: 521px;
-    height: 661px;
-    top: 181px;
-    
-}
+
 
 
 .tx-type-section {
     position: fixed;
-    transform: translate(190%, -400%);
+    transform: translate(21vh, -8vh);
 
 }
 

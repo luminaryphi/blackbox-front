@@ -264,12 +264,7 @@ export default {
     filter: brightness(25%);
 }
 
-.controls {
-    width: 521px;
-    height: 661px;
-    top: 181px;
-    
-}
+
 
 .input-section {
     padding-top: 20%;

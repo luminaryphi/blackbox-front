@@ -28,18 +28,16 @@ export default {
         border: none;
         font-style: normal;
         font-weight: normal;
-        font-size: 36px;
-        line-height: 43px;
+        font-size: 3vh;
         /* or 121% */
 
         text-align: center;
 
         color: white;
-        width: 307px;
-        height: 164px;
+        width: 30vh;
+        height: 15vh;
         left: 1024px;
-        top: 192px;
-        margin: 30px;
+        margin: 5vh;
         
     }
 
