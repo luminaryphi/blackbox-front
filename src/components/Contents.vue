@@ -79,7 +79,12 @@ body {
     background-position: 0% 50%;
     background-repeat:no-repeat;
     height: 90vh;
+
+
+
 }
+
+
 
 
 
@@ -111,7 +116,7 @@ body {
 
 .sub-title {
     margin-top: 3vh;
-    font-size: 6vh;
+    font-size: 5vh;
     line-height: 43px;
     text-align: left;
     color: whitesmoke;
@@ -122,8 +127,8 @@ body {
 
 
 .description {
-    font-size: 4vh;
-    line-height: 4vh;
+    font-size: 3vh;
+    line-height: 5vh;
     text-align: left;
     margin-top: 3vh;
     word-break: normal;
