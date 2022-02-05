@@ -48,7 +48,7 @@ export default {
             },
             TokenSelect: false,
             TokenDenom: "sSCRT",
-            TokenAddress: "secret12uqy5szfp62c55wp7ft24fu7de0c6xw3tz5hr6", //secret1k0jntykt7e4g3y88ltc60czgjuqdy4c9e8fzek",
+            TokenAddress: this.$store.state.token_address, //secret1k0jntykt7e4g3y88ltc60czgjuqdy4c9e8fzek",
             TokenImage: "/tokenIcons/scrt.svg",
             TokenDecimals: 6,
 
@@ -88,7 +88,7 @@ export default {
 
                 //ensure signing client is in glibal state
                 if (!this.$store.getters.hasSigningClient){
-                    this.$store.dispatch("setSigningClient", await getSigningClient("pulsar-2"));
+                    this.$store.dispatch("setSigningClient", await getSigningClient("secret-4"));
                 }
 
                 //cancel if no destination
@@ -142,7 +142,7 @@ export default {
                 const sendMsg = {
                     send: {
                         amount: amount.toString(),
-                        recipient: "secret1rlnclsly93s05csfv884effgky9nmh5j8tvse2", //deaddrop contract
+                        recipient: this.$store.state.deaddrop_address, //deaddrop contract
                         msg: Buffer.from(JSON.stringify(ddMsg)).toString('base64')
                     }
                 }
