@@ -58,7 +58,7 @@ export default {
 
                 //ensure signing client is in glibal state
                 if (!this.$store.getters.hasSigningClient){
-                    this.$store.dispatch("setSigningClient", await getSigningClient("secret-4"));
+                    this.$store.dispatch("setSigningClient", await getSigningClient(this.$store.state.chainId));
                 }
                 
                 //cancel if recipient is not a valid address
@@ -171,7 +171,7 @@ export default {
 
                 //ensure signing client is in glibal state
                 if (!this.$store.getters.hasSigningClient){
-                    this.$store.dispatch("setSigningClient", await getSigningClient("secret-4"));
+                    this.$store.dispatch("setSigningClient", await getSigningClient(this.$store.state.chainId));
                 }
 
                 //message for the cloak contract
