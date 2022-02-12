@@ -97,8 +97,8 @@ export default {
                     return false;
                 }
 
-                //set amount in uscrt
-                let amount = this.state.amount.trim()*1000000
+                //set amount in uscrt and add fee
+                let amount = (this.state.amount.trim()*1000000) + 1000000 //1SCRT fee
 
                 //message for the cloak contract
                 const cloakMsg = {
