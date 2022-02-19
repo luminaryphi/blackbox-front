@@ -1,5 +1,8 @@
 <template>
-    <button v-bind:class="getClass()">{{ text }}</button>
+    <button v-bind:class="getClass()" v-bind:disabled="disabled" >
+        {{ text }}
+        <span class=maintText v-html="getMaint()"></span>
+    </button>
 </template>
 
 
@@ -9,13 +12,19 @@ export default {
     props: {
         text: String,
         pointer: Boolean,
-        disabled: Boolean
+        disabled: Boolean,
+        maintenance: Boolean,
     },
     methods:{
         getClass(){
             return {
                 '': this.disabled,  
                 'enabled': !this.disabled}
+        },
+        getMaint(){
+            if ((this.maintenance)){
+                return  '<br/>Under Maintenance'
+            }
         }
     }
 }
@@ -49,6 +58,7 @@ export default {
 
     }
 
+
     button:hover {
         color: #cff8fb;
         box-shadow: inset 0 0 10px rgba(27, 253, 242, 0.6), 0 0 9px 3px rgba(27, 227, 253, 0.2);
@@ -70,6 +80,10 @@ export default {
     }
 
 
+    .maintText {
+        font-size: 1.5vh;
+        color: rgb(255, 65, 65);
+    }
   
 
     .enabled {
