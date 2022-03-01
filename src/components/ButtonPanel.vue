@@ -1,7 +1,7 @@
 <template>
     <div>
         <div>
-            <Button v-on:click="UseCloak" text="Cloak" disabled="true" maintenance="true"/>
+            <Button v-on:click="UseCloak" text="Cloak" />
         </div>
         <div>
             <Button v-on:click="UseDeaddrop" text="DeadDrop" />
