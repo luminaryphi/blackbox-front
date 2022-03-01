@@ -64,7 +64,7 @@ export default {
                 this.state.loading= true;
                 //ensure signing client is in glibal state
                 if (!this.$store.getters.hasSigningClient){
-                    this.$store.dispatch("setSigningClient", await getSigningClient("secret-4"));
+                    this.$store.dispatch("setSigningClient", await getSigningClient(this.$store.state.chainId));
                 }
 
                 //message for the deaddrop contract

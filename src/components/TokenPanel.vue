@@ -26,15 +26,15 @@
             <img class="token" src="/tokenIcons/osmo.png" alt="">
             <div>sOSMO</div>
         </div>
-        <div class="token-data pointer" @click="ConfirmToken('sXMR', 'sxmr.png', 'secret19ungtd2c7srftqdwgq0dspwvrw63dhu79qxv88', 6)">
+        <div class="token-data pointer" @click="ConfirmToken('sXMR', 'sxmr.png', 'secret19ungtd2c7srftqdwgq0dspwvrw63dhu79qxv88', 12)">
             <img class="token" src="/tokenIcons/sxmr.png" alt="">
             <div>sXMR</div>
         </div>
-        <div class="token-data pointer" @click="ConfirmToken('sWBTC', 'wbtc_ethereum.svg', 'secret1g7jfnxmxkjgqdts9wlmn238mrzxz5r92zwqv4a', 6)">
+        <div class="token-data pointer" @click="ConfirmToken('sWBTC', 'wbtc_ethereum.svg', 'secret1g7jfnxmxkjgqdts9wlmn238mrzxz5r92zwqv4a', 8)">
             <img class="token" src="/tokenIcons/wbtc_ethereum.svg" alt="">
             <div>sWBTC</div>
         </div>
-        <div class="token-data pointer" @click="ConfirmToken('sBNB', 'bnb_binance.svg', 'secret1tact8rxxrvynk4pwukydnle4l0pdmj0sq9j9d5', 6)">
+        <div class="token-data pointer" @click="ConfirmToken('sBNB', 'bnb_binance.svg', 'secret1tact8rxxrvynk4pwukydnle4l0pdmj0sq9j9d5', 18)">
             <img class="token" src="/tokenIcons/bnb_binance.svg" alt="">
             <div>sBNB</div>
         </div>
