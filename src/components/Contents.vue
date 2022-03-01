@@ -2,7 +2,7 @@
     <body>
         
         <div class="panel">
-            <component :is="PanelType" v-on:UseCloak="SetCloak" v-on:UseDeaddrop="SetDeaddrop" v-on:ReturnHome="SetHome" v-on:ToReceive="SetReceive"></component>
+            <component :is="PanelType" v-on:UseCloak="SetCloak" v-on:UseDeaddrop="SetDeaddrop" v-on:ReturnHome="SetHome" v-on:ToReceive="SetReceive" v-on:ToCloakReceive="SetCloakReceive"></component>
         </div>
 
         <div class="info">
@@ -20,6 +20,7 @@
 import CloakPanel from './CloakPanel.vue'
 import DeaddropSendPanel from './DeaddropSendPanel.vue'
 import DeaddropReceivePanel from './DeaddropReceivePanel.vue'
+import CloakReceivePanel from './CloakReceivePanel.vue'
 import ButtonPanel from './ButtonPanel.vue'
 import GlitchedWriter from 'vue-glitched-writer'
 
@@ -46,6 +47,11 @@ export default {
     methods: {
         SetCloak: function(){
             this.PanelType = CloakPanel
+            this.subtitle = "/Cloak"
+            this.description = "Seed another wallet with SCRT gas without a trace. Escape doxing with no link to your old address."
+        },
+        SetCloakReceive: function(){
+            this.PanelType = CloakReceivePanel
             this.subtitle = "/Cloak"
             this.description = "Seed another wallet with SCRT gas without a trace. Escape doxing with no link to your old address."
         },

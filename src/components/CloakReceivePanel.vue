@@ -2,22 +2,21 @@
     <form class="action-box controls">
         <div class="input-section">
             <div class="tx-type-section">
-                <span class="selected">Send</span>
+                <span class="unselected pointer" v-on:click="ToSend">Send</span>
                 <span> / </span>
-                <span class="unselected pointer" v-on:click="ToReceive">Receive</span>
+                <span class="selected">Receive</span>
             </div>
-            <h1>Amount</h1>
-            <img class="token" src="/tokenIcons/scrt.svg" alt="">
-            <input type="text" v-model="state.amount" placeholder="sSCRT" required>
+            <h1>TX Key</h1>
+            <input type="text" v-model="state.amount" placeholder="..." required>
             <div class="withdraw pointer"><a @click=ExecuteCancel>(Cancel Pending Transactions)</a></div>
         </div>
         <div class="txbutton" v-if="!state.loading">
-            <a @click=ExecuteCloak><TxSubmit text="Send" /></a>
+            <a @click=ExecuteCloak><TxSubmit text="Receive" /></a>
         </div>
         <div class="spinner" v-else>
             <i class="c-inline-spinner" />
         </div>
-        <div class="fee">Fee: 1 sSCRT</div>
+        <div class="fee"></div>
         <img class="return pointer" src="@/assets/BackArrow.svg" alt="Back" v-on:click="ReturnHome">
     </form>
 </template>
@@ -30,7 +29,7 @@ import TxSubmit from './TxSubmit.vue'
 import { useToast } from "vue-toastification";
 
 export default {
-    name: 'CloakPanel',
+    name: 'CloakReceivePanel',
     components: {
         TxSubmit
     },
@@ -54,8 +53,8 @@ export default {
         ReturnHome: function() {
             this.$emit('ReturnHome')
         },
-        ToReceive: function() {
-            this.$emit('ToCloakReceive')
+        ToSend: function() {
+            this.$emit('UseCloak')
         },
         ExecuteCloak: async function() {
             try{
@@ -285,13 +284,6 @@ input {
     text-align: center;
 }
 
-
-.token {
-    width: 50px;  
-    height: auto;  
-    position: fixed;
-    transform: translate(-125%, -20%);
-}
 
 
 .txbutton {
