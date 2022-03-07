@@ -9,7 +9,7 @@
             <h1>Amount</h1>
             <img class="token" src="/tokenIcons/scrt.svg" alt="">
             <input type="text" v-model="state.amount" placeholder="sSCRT" required>
-            <div class="withdraw pointer"><a @click=ExecuteCancel>(Cancel Pending Transactions)</a></div>
+            <div class="withdraw pointer"><a v-on:click="ToCancel">(Cancel Pending Transactions)</a></div>
         </div>
         <div class="txbutton" v-if="!state.loading">
             <a @click=ExecuteCloak><TxSubmit text="Send" /></a>
@@ -56,6 +56,9 @@ export default {
         },
         ToReceive: function() {
             this.$emit('ToCloakReceive')
+        },
+        ToCancel: function() {
+            this.$emit('UseCancel')
         },
         ExecuteCloak: async function() {
             try{

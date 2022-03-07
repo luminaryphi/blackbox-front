@@ -1,17 +1,11 @@
 <template>
     <form class="action-box controls">
         <div class="input-section">
-            <div class="tx-type-section">
-                <span class="unselected pointer" v-on:click="ToSend">Send</span>
-                <span> / </span>
-                <span class="selected">Receive</span>
-            </div>
-            <h1>TX Key</h1>
+            <h1>Tx Key</h1>
             <input type="text" v-model="state.amount" placeholder="..." required>
-            <div class="withdraw pointer"><a v-on:click="ToCancel">(Cancel Pending Transactions)</a></div>
         </div>
         <div class="txbutton" v-if="!state.loading">
-            <a @click=ExecuteCloak><TxSubmit text="Receive" /></a>
+            <a @click=ExecuteCancel><TxSubmit text="Cancel" /></a>
         </div>
         <div class="spinner" v-else>
             <i class="c-inline-spinner" />
@@ -29,7 +23,7 @@ import TxSubmit from './TxSubmit.vue'
 import { useToast } from "vue-toastification";
 
 export default {
-    name: 'CloakReceivePanel',
+    name: 'CloakCancelPanel',
     components: {
         TxSubmit
     },
@@ -51,13 +45,10 @@ export default {
     },
     methods: {
         ReturnHome: function() {
-            this.$emit('ReturnHome')
-        },
-        ToSend: function() {
             this.$emit('UseCloak')
         },
-        ToCancel: function() {
-            this.$emit('UseCancel')
+        ToReceive: function() {
+            this.$emit('ToCloakReceive')
         },
         ExecuteCloak: async function() {
             try{
@@ -66,7 +57,7 @@ export default {
 
                 //ensure signing client is in glibal state
                 if (!this.$store.getters.hasSigningClient){
-                    this.$store.dispatch("setSigningClient", await getSigningClient("secret-4"));
+                    this.$store.dispatch("setSigningClient", await getSigningClient(this.$store.state.chainId));
                 }
                 
                 //cancel if recipient is not a valid address
@@ -179,7 +170,7 @@ export default {
 
                 //ensure signing client is in glibal state
                 if (!this.$store.getters.hasSigningClient){
-                    this.$store.dispatch("setSigningClient", await getSigningClient("secret-4"));
+                    this.$store.dispatch("setSigningClient", await getSigningClient(this.$store.state.chainId));
                 }
 
                 //message for the cloak contract
@@ -332,19 +323,6 @@ input {
 }
 
 
-.tx-type-section {
-    position: fixed;
-    transform: translate(21vh, -8vh);
 
-}
-
-
-.selected {
-    color: #2c3e50;
-}
-
-.unselected:hover {
-    filter: brightness(25%);
-}
 
 </style>

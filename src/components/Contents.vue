@@ -2,7 +2,7 @@
     <body>
         
         <div class="panel">
-            <component :is="PanelType" v-on:UseCloak="SetCloak" v-on:UseDeaddrop="SetDeaddrop" v-on:ReturnHome="SetHome" v-on:ToReceive="SetReceive" v-on:ToCloakReceive="SetCloakReceive"></component>
+            <component :is="PanelType" v-on:UseCloak="SetCloak" v-on:UseDeaddrop="SetDeaddrop" v-on:ReturnHome="SetHome" v-on:ToReceive="SetReceive" v-on:ToCloakReceive="SetCloakReceive" v-on:UseCancel="SetCloakCancel"></component>
         </div>
 
         <div class="info">
@@ -21,6 +21,7 @@ import CloakPanel from './CloakPanel.vue'
 import DeaddropSendPanel from './DeaddropSendPanel.vue'
 import DeaddropReceivePanel from './DeaddropReceivePanel.vue'
 import CloakReceivePanel from './CloakReceivePanel.vue'
+import CloakCancelPanel from './CloakCancelPanel.vue'
 import ButtonPanel from './ButtonPanel.vue'
 import GlitchedWriter from 'vue-glitched-writer'
 
@@ -31,6 +32,8 @@ export default {
     name: 'Contents',
     components: {
         CloakPanel,
+        CloakReceivePanel,
+        CloakCancelPanel,
         ButtonPanel,
         DeaddropSendPanel,
         DeaddropReceivePanel,
@@ -52,6 +55,11 @@ export default {
         },
         SetCloakReceive: function(){
             this.PanelType = CloakReceivePanel
+            this.subtitle = "/Cloak"
+            this.description = "Seed another wallet with SCRT gas without a trace. Escape doxing with no link to your old address."
+        },
+        SetCloakCancel: function(){
+            this.PanelType = CloakCancelPanel
             this.subtitle = "/Cloak"
             this.description = "Seed another wallet with SCRT gas without a trace. Escape doxing with no link to your old address."
         },
