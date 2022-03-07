@@ -1,7 +1,7 @@
 <template>
     <header>
-        <a class="head-item-left" href="https://medium.com/@TriviumNode/preserve-your-privacy-with-blackbox-f7c60b46ee46">About</a>
-        <a class="head-item-right" href="https://github.com/TriviumNode">Github</a>
+        <a class="head-item-left" rel="noopener noreferrer" target="_blank" href="https://medium.com/@TriviumNode/preserve-your-privacy-with-blackbox-f7c60b46ee46">About</a>
+        <a class="head-item-right" rel="noopener noreferrer" target="_blank" href="https://github.com/TriviumNode">Github</a>
     </header>
 </template>
 
