@@ -172,6 +172,7 @@ export default {
                         timeout: 8000
                     });
                     this.state.outTxKey = logs.kv_logs.wasm.tx_code
+                    this.$store.dispatch("addKeyHistory", logs.kv_logs.wasm.tx_code);
                 }
             } catch(e) {
                 this.toast.error(`Unknown error occured: ${e}`, {

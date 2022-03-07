@@ -16,20 +16,34 @@ export default createStore({
         cloak_address: "secret10jdw9d5x58a9nup4sue42234r3gsq36ppcng0k",
         cloak_code_hash: "dd4b9d22d12b8e67cc47f409e7ff228c427cd326ea8fdfe6679682e523fbcb0a",
         deaddrop_address: "secret17sx7jrdwr2uy6n3uzk5tykdgydp73mwsfhpenw",
-        deaddrop_code_hash: "f7b091ee44afe253981a74d846ed1b59a166b18e1edd8040c60ae53ebc5faf8c"
+        deaddrop_code_hash: "f7b091ee44afe253981a74d846ed1b59a166b18e1edd8040c60ae53ebc5faf8c",
+        key_history: JSON.parse(localStorage.getItem('cloak_key_history')) || []
       },
     mutations: {
         UPDATE_SIGNER(state, payload){
             state.secretJs = payload
+        },
+        UPDATE_KEY_HISTORY(state, payload){
+            state.key_history.push(payload);
+            localStorage.setItem('cloak_key_history', JSON.stringify(state.key_history))
         }
     },
     actions: {
         setSigningClient(context, payload) {
             context.commit('UPDATE_SIGNER', payload)
+        },
+        addKeyHistory(context, payload){
+            context.commit('UPDATE_KEY_HISTORY', payload)
         }
     },
     getters: {
         hasSigningClient: function (state) {
+            if (!state.secretJs) {
+                return false;
+            }
+            return true;
+        },
+        getKeyHistory: function (state) {
             if (!state.secretJs) {
                 return false;
             }
