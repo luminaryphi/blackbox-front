@@ -46,9 +46,6 @@ export default {
         ReturnHome: function() {
             this.$emit('UseCloak')
         },
-        ToReceive: function() {
-            this.$emit('ToCloakReceive')
-        },
         ExecuteCancel: async function() {
             try{
                 //replace button with spinner
