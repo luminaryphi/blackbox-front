@@ -12,7 +12,7 @@
             <h1>Recipient</h1>
             <input type="text" v-model="state.destination" placeholder="secret1..." required>
 
-            <div class="withdraw pointer"><a @click=ExecuteCancel>(Cancel Pending Transactions)</a></div>
+            <div class="withdraw pointer"><a v-on:click="ToCancel">(Cancel Pending Transactions)</a></div>
         </div>
         <div class="txbutton" v-if="!state.loading">
             <a @click=ExecuteCloak><TxSubmit text="Receive" /></a>
@@ -68,6 +68,15 @@ export default {
             try{
                 //replace button with spinner
                 this.state.loading=true;
+
+                //verify tx key is valid
+                if (this.state.tx_key?.length !== 64){
+                    this.toast.error(`Invalid TX Key: TX Key should be 64 characters.`, {
+                        timeout: 8000
+                    })
+                    this.state.loading=false;
+                    return;
+                }
 
                 //ensure signing client is in glibal state
                 if (!this.$store.getters.hasSigningClient){
