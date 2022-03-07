@@ -11,6 +11,12 @@
             <input type="text" v-model="state.amount" placeholder="sSCRT" required>
             <div class="withdraw pointer"><a v-on:click="ToCancel">(Cancel Pending Transactions)</a></div>
         </div>
+        <div class="output-section" v-if="state.outTxKey">
+            <h2>Your TX Key is:</h2>
+            <span class="output-alias">{{ state.outTxKey }}</span>
+            <br/>
+            <span>You can redeem the funds to an address of your choice on the <span class="unselected pointer" v-on:click="ToReceive">Receive</span> page.</span>
+        </div>
         <div class="txbutton" v-if="!state.loading">
             <a @click=ExecuteCloak><TxSubmit text="Send" /></a>
         </div>
@@ -25,7 +31,7 @@
 
 
 <script>
-import { getSigningClient, isValidAddress, countDecimals } from '../utils/keplrHelper'
+import { getSigningClient, countDecimals } from '../utils/keplrHelper'
 import TxSubmit from './TxSubmit.vue'
 import { useToast } from "vue-toastification";
 
@@ -39,7 +45,8 @@ export default {
             state: {
                 loading: false,
                 amount: "",
-                destination: ""
+                destination: "",
+                outTxKey: null
             }
         }
     },
@@ -65,11 +72,12 @@ export default {
                 //replace button with spinner
                 this.state.loading=true;
 
-                //ensure signing client is in glibal state
+                //ensure signing client is in global state
                 if (!this.$store.getters.hasSigningClient){
                     this.$store.dispatch("setSigningClient", await getSigningClient(this.$store.state.chainId));
                 }
-                
+
+            /*
                 //cancel if recipient is not a valid address
                 if (!this.state.destination.trim() || !isValidAddress(this.state.destination.trim())){
                     this.toast.error(`Invalid Recipient Address: ${this.state.destination.trim()}`, {
@@ -81,6 +89,7 @@ export default {
 
                     return false;
                 }
+            */
 
                 //cancel if invalid number
                 if (!this.state.amount.trim() || isNaN(this.state.amount.trim())){
@@ -111,9 +120,7 @@ export default {
 
                 //message for the cloak contract
                 const cloakMsg = {
-                    receive_seed : {
-                        recipient: this.state.destination.trim()
-                    }
+                    receive_seed : { }
                 }; 
 
                 //send message for the sSCRT contract
@@ -159,9 +166,12 @@ export default {
                         timeout: 8000
                     })
                 } else {
+                    const logs = this.$store.state.secretJs.processLogs(data);
+                    console.log(logs.kv_logs.wasm.tx_code)
                     this.toast.success("Transaction Succeeded!", {
                         timeout: 8000
                     });
+                    this.state.outTxKey = logs.kv_logs.wasm.tx_code
                 }
             } catch(e) {
                 this.toast.error(`Unknown error occured: ${e}`, {
@@ -277,6 +287,17 @@ export default {
 
 .input-section {
     padding-top: 20%;
+}
+
+.output-section {
+    padding-top: 5%;
+}
+
+.output-alias {
+    display: block;
+    word-wrap: break-word;
+    width: 70%;
+    margin: auto;
 }
 
 

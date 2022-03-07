@@ -7,8 +7,12 @@
                 <span class="selected">Receive</span>
             </div>
             <h1>TX Key</h1>
-            <input type="text" v-model="state.amount" placeholder="..." required>
-            <div class="withdraw pointer"><a v-on:click="ToCancel">(Cancel Pending Transactions)</a></div>
+            <input type="text" v-model="state.tx_key" placeholder="..." required>
+
+            <h1>Recipient</h1>
+            <input type="text" v-model="state.destination" placeholder="secret1..." required>
+
+            <div class="withdraw pointer"><a @click=ExecuteCancel>(Cancel Pending Transactions)</a></div>
         </div>
         <div class="txbutton" v-if="!state.loading">
             <a @click=ExecuteCloak><TxSubmit text="Receive" /></a>
@@ -24,9 +28,10 @@
 
 
 <script>
-import { getSigningClient, isValidAddress, countDecimals } from '../utils/keplrHelper'
+import { getSigningClient, isValidAddress } from '../utils/keplrHelper'
 import TxSubmit from './TxSubmit.vue'
 import { useToast } from "vue-toastification";
+import axios from "axios";
 
 export default {
     name: 'CloakReceivePanel',
@@ -37,7 +42,7 @@ export default {
         return {
             state: {
                 loading: false,
-                amount: "",
+                tx_key: "",
                 destination: ""
             }
         }
@@ -81,6 +86,7 @@ export default {
                     return false;
                 }
 
+            /*
                 //cancel if invalid number
                 if (!this.state.amount.trim() || isNaN(this.state.amount.trim())){
                     this.toast.error(`Invalid Amount: ${this.state.amount.trim()}`, {
@@ -123,47 +129,34 @@ export default {
                         msg: Buffer.from(JSON.stringify(cloakMsg)).toString('base64')
                     }
                 }
+            */
 
                 //"Sync" broadcast mode returns tx hash only (or error if it failed to enter the mempool)
-                let response = await this.$store.state.secretJs.execute(this.$store.state.token_address, sendMsg);
-                if (response.code){
-                    this.toast.error(`Transaction Failed: ${response.raw_log}`, {
-                        timeout: 8000
-                    })
-                                        
-                    //show button again
-                    this.state.loading=false;
+                //let response = await this.$store.state.secretJs.execute(this.$store.state.token_address, sendMsg);
+                this.toast("Transaction Processing...", {
+                    id: "tx-processing",
+                    timeout: false,
+                    closeButton: false
+                });
+                let response = await axios.get(`${this.$store.state.operator_url}/release?txkey=${this.state.tx_key.trim()}&sender=${this.state.destination.trim()}`)
+                console.log(response)
 
-                    return false;
-
-                } else {
-                    this.toast("Transaction Processing...", {
-                        id: "tx-processing",
-                        timeout: false,
-                        closeButton: false
-                    });
+                //handle non breaking errors
+                if (response.status !== 200){
+                    throw `Invalid Response: ${response.data.message}`
                 }
 
-                //poll tx's endpoint every 1000ms up to 5 times to check when tx is processed. Returns full tx object
-                let data = await this.$store.state.secretJs.checkTx(response.transactionHash,1000,5)
-                console.log(data)
-                this.toast.dismiss("tx-processing");
-                                    
                 //show button again
+                this.toast.dismiss("tx-processing");
                 this.state.loading=false;
 
-                //if error
-                if (data.code){
-                    this.toast.error(`Transaction Failed: ${data.raw_log}`, {
-                        timeout: 8000
-                    })
-                } else {
-                    this.toast.success("Transaction Succeeded!", {
-                        timeout: 8000
-                    });
-                }
+                this.toast.success("Transaction Succeeded!", {
+                    timeout: 8000
+                });
+
             } catch(e) {
-                this.toast.error(`Unknown error occured: ${e}`, {
+                console.log(e.response.data.message)
+                this.toast.error(`Unknown error occured: ${e.response.data.message || e}`, {
                     timeout: 8000
                 })
                                     

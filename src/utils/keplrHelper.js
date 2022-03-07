@@ -60,7 +60,7 @@ async function getSigningClient(chainId) {
     let apiUrl = "https://secret-4.api.trivium.network:1317"
     if (chainId.includes("ulsar")){
         await suggestPulsar();
-        apiUrl = "https://api.pulsar.griptapejs.com"
+        apiUrl = "http://66.85.142.147:11317"
     }
     window.keplr.enable(chainId);
     const offlineSigner = window.getOfflineSigner(chainId);

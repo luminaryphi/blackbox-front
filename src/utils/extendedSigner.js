@@ -24,7 +24,9 @@ export class ExtendedSender extends SigningCosmWasmClient {
     processLogs = (tx) => {
         let logs = {};
         console.log(tx)
-        tx.logs[0].events[1].attributes.map((obj) => { logs[obj.key.trim()] = obj.value.trim() });
+        tx.logs[0].events.map((obj) => { logs[obj.type.trim()] = obj.attributes });
+        logs.wasm.map((obj) => { logs.wasm[obj.key.trim()] = obj.value.trim() });
+        console.log("**LOGS**", logs)
         tx.kv_logs=logs;
         return tx;
     }
