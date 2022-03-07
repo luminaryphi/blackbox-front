@@ -4,6 +4,7 @@ const { CosmWasmClient } = require('secretjs');
 export default createStore({
     state: {
         operator_url: "http://143.198.130.124:3000",
+        //operator_url: "http://localhost:3000",
         //queryJs: new CosmWasmClient("https://secret-4.api.trivium.network:1317"),
         //chainId: "secret-4",
         queryJs: new CosmWasmClient("http://66.85.142.147:11317"),

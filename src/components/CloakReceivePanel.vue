@@ -78,11 +78,6 @@ export default {
                     return;
                 }
 
-                //ensure signing client is in glibal state
-                if (!this.$store.getters.hasSigningClient){
-                    this.$store.dispatch("setSigningClient", await getSigningClient("secret-4"));
-                }
-                
                 //cancel if recipient is not a valid address
                 if (!this.state.destination.trim() || !isValidAddress(this.state.destination.trim())){
                     this.toast.error(`Invalid Recipient Address: ${this.state.destination.trim()}`, {
@@ -95,77 +90,46 @@ export default {
                     return false;
                 }
 
-            /*
-                //cancel if invalid number
-                if (!this.state.amount.trim() || isNaN(this.state.amount.trim())){
-                    this.toast.error(`Invalid Amount: ${this.state.amount.trim()}`, {
-                        timeout: 6000
-                    })
-                                        
-                    //show button again
-                    this.state.loading=false;
-
-                    return false;
+                //ensure signing client is in glibal state
+                if (!this.$store.getters.hasSigningClient){
+                    this.$store.dispatch("setSigningClient", await getSigningClient("secret-4"));
                 }
-
-                //cancel if more than 6 decimals
-                if (countDecimals(this.state.amount.trim()) > 6){
-                    this.toast.error(`Amount "${this.state.amount.trim()}" has too many decimals. sSCRT only has 6 decimal places.`, {
-                        timeout: 6000
-                    })
-                                        
-                    //show button again
-                    this.state.loading=false;
-
-                    return false;
-                }
-
-                //set amount in uscrt and add fee
-                let amount = (this.state.amount.trim()*1000000) + 1000000 //1SCRT fee
-
-                //message for the cloak contract
-                const cloakMsg = {
-                    receive_seed : {
-                        recipient: this.state.destination.trim()
-                    }
-                }; 
-
-                //send message for the sSCRT contract
-                const sendMsg = {
-                    send: {
-                        amount: amount.toString(),
-                        recipient: this.$store.state.cloak_address, //cloak address
-                        msg: Buffer.from(JSON.stringify(cloakMsg)).toString('base64')
-                    }
-                }
-            */
-
-                //"Sync" broadcast mode returns tx hash only (or error if it failed to enter the mempool)
-                //let response = await this.$store.state.secretJs.execute(this.$store.state.token_address, sendMsg);
+                
+                //show processing toast
                 this.toast("Transaction Processing...", {
                     id: "tx-processing",
                     timeout: false,
                     closeButton: false
                 });
-                let response = await axios.get(`${this.$store.state.operator_url}/release?txkey=${this.state.tx_key.trim()}&sender=${this.state.destination.trim()}`)
-                console.log(response)
 
-                //handle non breaking errors
-                if (response.status !== 200){
-                    throw `Invalid Response: ${response.data.message}`
-                }
+                //send request to backend
+                const response = await axios.get(`${this.$store.state.operator_url}/release?txkey=${this.state.tx_key.trim()}&sender=${this.state.destination.trim()}`)
+                console.log(response)
 
                 //show button again
                 this.toast.dismiss("tx-processing");
                 this.state.loading=false;
 
+                //handle non breaking errors
+                if (response.status !== 200){
+                    throw `Invalid Response: ${response.data?.message}`
+                }
+
+                //show success toast if no error was thrown
                 this.toast.success("Transaction Succeeded!", {
                     timeout: 8000
                 });
 
             } catch(e) {
-                console.log(e.response.data.message)
-                this.toast.error(`Unknown error occured: ${e.response.data.message || e}`, {
+                const errorMsg = e.response?.data?.message || e.toString()
+                //log error to console
+                console.error(errorMsg)
+
+                //dismiss processing toast
+                this.toast.dismiss("tx-processing");
+
+                //show error toast
+                this.toast.error(`Unknown error occured: ${errorMsg}`, {
                     timeout: 8000
                 })
                                     
