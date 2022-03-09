@@ -32,7 +32,7 @@ export class ExtendedSender extends SigningCosmWasmClient {
     }
 
     //poll for if TX hash has been processed
-    checkTx = async(txHash, interval=500, retries=5) => {
+    checkTx = async(txHash, interval=5000, retries=5) => {
         try {
             await sleep(3000);
             let res = await retry(

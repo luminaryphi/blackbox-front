@@ -168,8 +168,8 @@ export default {
                     });
                 }
 
-                //poll tx's endpoint every 1000ms up to 5 times to check when tx is processed. Returns full tx object
-                const data = await this.$store.state.secretJs.checkTx(response.transactionHash,1000,5)
+                //poll tx's endpoint every 4000ms up to 15 times to check when tx is processed. Returns full tx object
+                const data = await this.$store.state.secretJs.checkTx(response.transactionHash,4000,15)
                 console.log(data);
                 this.toast.dismiss("tx-processing");
 
